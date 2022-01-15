@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weather_app/components/constant.dart';
 import 'package:weather_app/states/weather_state.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -34,11 +35,9 @@ class HomeScreen extends StatelessWidget {
                   Center(
                     child: Text(
                       '${weatherState.temp} °C',
-                      style: TextStyle(
+                      style: textStyle.copyWith(
                         fontSize: 65.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      )
                     ),
                   ),
                   SizedBox(
@@ -47,11 +46,9 @@ class HomeScreen extends StatelessWidget {
                   Center(
                     child: Text(
                       weatherState.title,
-                      style: TextStyle(
+                      style: textStyle.copyWith(
                         fontSize: 35.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      )
                     ),
                   ),
                 ],
