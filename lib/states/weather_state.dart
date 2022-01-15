@@ -20,7 +20,7 @@ class WeatherState with ChangeNotifier {
 
   void fetchLocation(String value) async {
 
-    if (value.isEmpty || value == '') {
+    if (value.isEmpty || value == '' || value == ' ') {
       value = 'Dhaka';
     }
 
@@ -30,38 +30,39 @@ class WeatherState with ChangeNotifier {
 
     if (searchResponse.statusCode == 200) {
 
-      var result = json.decode(searchResponse.body)[0];
+      var result = json.decode(searchResponse.body);
 
+      if(result.length > 0){
 
-      title = result['title'];
-      woeId = result['woeid'];
+        title = result[0]['title'];
+        woeId = result[0]['woeid'];
+
+        var weatherAPI = Uri.parse('https://www.metaweather.com/api/location/$woeId');
+
+        var response = await http.get(weatherAPI);
+
+        if(response.statusCode == 200){
+
+          var result = json.decode(response.body)['consolidated_weather'][0];
+
+          temp = result['the_temp'].round();
+          print('${result['the_temp'].round()} °C');
+          String back = result['weather_state_name'].replaceAll(' ','').toLowerCase();
+          if(back.isNotEmpty){
+            bg = back;
+          }
+
+          iconName = result['weather_state_abbr'];
+
+        }
+      }
+      else{
+        title = 'No city found.';
+        temp = 0;
+      }
 
     } else {
       title = 'Something went wrong';
-    }
-
-    fetchWeather();
-
-    notifyListeners();
-  }
-
-  void fetchWeather() async {
-
-    var weatherAPI = Uri.parse('https://www.metaweather.com/api/location/$woeId');
-
-    var response = await http.get(weatherAPI);
-
-    if(response.statusCode == 200){
-
-      var result = json.decode(response.body)['consolidated_weather'][0];
-
-      temp = result['the_temp'].round();
-      print('${result['the_temp'].round()} °C');
-      String back = result['weather_state_name'].replaceAll(' ','').toLowerCase();
-      if(back.isNotEmpty){
-        bg = back;
-      }
-      iconName = result['weather_state_abbr'];
     }
 
     notifyListeners();
